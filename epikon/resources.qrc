@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/common/earth-1.svg</file>
+        <file>resources/common/earth-2.svg</file>
+        <file>resources/common/earth-3.svg</file>
+        <file>resources/common/earth-4.svg</file>
+        <file>resources/common/earth-5.svg</file>
+        <file>resources/common/earth-6.svg</file>
+        <file>resources/common/earth-7.svg</file>
+        <file>resources/common/earth-8.svg</file>
+        <file>resources/common/earth-9.svg</file>
+    </qresource>
+</RCC>
