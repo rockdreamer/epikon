@@ -17,6 +17,7 @@ public:
     EpikonPlayer* me(){return m_me;};
     QList<EpikonPlayer*> *players(){return m_players;};
     QList<EpikonPlanet*> *planets(){return m_planets;};
+    QString toString();
 private:
     QList<EpikonPlayer*> *m_players;
     QList<EpikonPlanet*> *m_planets;

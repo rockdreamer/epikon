@@ -20,3 +20,11 @@ void EpikonGame::addPlanet(EpikonPlanet* planet)
 {
     m_planets->append(planet);
 }
+
+QString EpikonGame::toString()
+{
+    QString res;
+    res.append("EPIKONGAME v1.0\n");
+    res.append("PLAYERS");
+    return res;
+}

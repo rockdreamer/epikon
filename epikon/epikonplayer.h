@@ -26,6 +26,7 @@ public:
       void setRemainingPlanets(int in) {m_remainingPlanets=in;};
 
       QSvgRenderer *planetRenderer() {return m_planetrenderer;};
+      void setPlanet(const QString& filename);
   public slots:
       void capturedPlanet(EpikonPlanet* planet);
       void lostPlanet(EpikonPlanet* planet);

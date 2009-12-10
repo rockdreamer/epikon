@@ -5,6 +5,7 @@
 #include "epikonshipitem.h"
 #include "epikongamescene.h"
 #include <QPropertyAnimation>
+#include <QDebug>
 
 EpikonAttack::EpikonAttack(EpikonGameScene* scene, EpikonPlanet* from,
                            EpikonPlanet* to, EpikonPlayer* player, int numShips, QObject* parent):
@@ -20,7 +21,9 @@ EpikonAttack::EpikonAttack(EpikonGameScene* scene, EpikonPlanet* from,
     anim->setStartValue(pos);
     pos=to->item()->pos();
     anim->setEndValue(pos);
+    anim->setEasingCurve(QEasingCurve::InBack);
     addAnimation(anim);
+
     connect(anim,SIGNAL(finished()),this,SLOT(onFinished()));
 }
 

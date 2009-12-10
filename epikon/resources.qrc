@@ -9,5 +9,6 @@
         <file>resources/common/earth-7.svg</file>
         <file>resources/common/earth-8.svg</file>
         <file>resources/common/earth-9.svg</file>
+        <file>resources/common/rocket.svg</file>
     </qresource>
 </RCC>

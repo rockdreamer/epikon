@@ -22,7 +22,7 @@ private:
     QGraphicsSimpleTextItem *shipsremaining;
     static QSvgRenderer* neutralRenderer;
     QGraphicsEllipseItem *rect;
-    qreal m_size;
+    qreal m_size, m_svgsize;
 };
 
 #endif // EPIKONPLANETITEM_H

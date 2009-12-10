@@ -17,6 +17,7 @@ EpikonMainWindow::EpikonMainWindow(QWidget *parent) :
     connect(ui->actionAbout_Epikon, SIGNAL(triggered()),qApp,SLOT(aboutQt()));
     connect(ui->actionAbout_Qt, SIGNAL(triggered()),qApp,SLOT(aboutQt()));
     connect(ui->actionNew_Game, SIGNAL(triggered()),this,SLOT(onNewGame()));
+    // This is here for testing purposes...
     onNewGame();
 }
 
@@ -44,10 +45,13 @@ void EpikonMainWindow::onNewGame()
 
     p1 = new EpikonPlayer(m_game);
     p1->setName("Player 1");
+    p1->setPlanet(QString(":/resources/common/earth-4.svg"));
+
     m_game->addPlayer(p1,true);
 
     p2 = new EpikonPlayer(m_game);
     p2->setName("Player 2");
+    p2->setPlanet(QString(":/resources/common/earth-3.svg"));
     m_game->addPlayer(p2);
 
     pl1 = new EpikonPlanet(10,10,100,100, m_game);

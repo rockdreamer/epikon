@@ -4,12 +4,15 @@
 EpikonPlayer::EpikonPlayer(QObject *parent) :
         QObject(parent),m_name("Anonymous Coward"),m_remainingShips(0),m_remainingPlanets(0)
 {
-    m_planetrenderer = new QSvgRenderer(QString(":/resources/common/earth-4.svg"));
 }
 
 void EpikonPlayer::capturedPlanet(EpikonPlanet* planet){
     setRemainingPlanets(remainingPlanets()+1);
 
+}
+
+void EpikonPlayer::setPlanet(const QString& filename){
+    m_planetrenderer = new QSvgRenderer(filename);
 }
 
 void EpikonPlayer::lostPlanet(EpikonPlanet* planet){
