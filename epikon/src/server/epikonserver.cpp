@@ -21,7 +21,7 @@ EpikonServer *EpikonServer::instance()
 
  void EpikonServer::incomingConnection(int socketDescriptor)
  {
-     if (EpikonConnectionManager::instance()->canAddConnection() && !clients.isEmpty()) {
+     if (EpikonConnectionManager::instance()->canAddConnection()) {
         EpikonClient *client = new EpikonClient(this);
         client->setSocketDescriptor(socketDescriptor);
         EpikonConnectionManager::instance()->addConnection(client);
