@@ -14,7 +14,10 @@ SOURCES += main.cpp \
     epikongamescene.cpp \
     epikonplanetitem.cpp \
     epikonattack.cpp \
-    epikonshipitem.cpp
+    epikonshipitem.cpp \
+    epikonserver.cpp \
+    epikonconnectionmanager.cpp \
+    epikonclient.cpp
 HEADERS += epikonmainwindow.h \
     epikongame.h \
     epikonplayer.h \
@@ -22,6 +25,9 @@ HEADERS += epikonmainwindow.h \
     epikongamescene.h \
     epikonplanetitem.h \
     epikonattack.h \
-    epikonshipitem.h
+    epikonshipitem.h \
+    epikonserver.h \
+    epikonconnectionmanager.h \
+    epikonclient.h
 FORMS += epikonmainwindow.ui
 RESOURCES += resources.qrc
