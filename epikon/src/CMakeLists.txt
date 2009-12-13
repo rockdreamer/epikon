@@ -29,6 +29,12 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:wchar_t-")
 endif(MSVC)
 
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/epikondefs.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/epikondefs.h"
+    IMMEDIATE
+    @ONLY)
+
 add_subdirectory(server)
 add_subdirectory(client)
 

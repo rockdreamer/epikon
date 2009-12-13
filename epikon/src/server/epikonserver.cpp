@@ -1,6 +1,9 @@
 #include "epikonserver.h"
 #include "epikonconnectionmanager.h"
 #include "epikonclient.h"
+#include <QDebug>
+
+using namespace Epikon::Server;
 
 Q_GLOBAL_STATIC(EpikonServer, epikonServer)
 
@@ -22,19 +25,21 @@ EpikonServer *EpikonServer::instance()
  void EpikonServer::incomingConnection(int socketDescriptor)
  {
      if (EpikonConnectionManager::instance()->canAddConnection()) {
-        EpikonClient *client = new EpikonClient(this);
+        qDebug() << "Incoming connection";
+        Client *client = new Client(this);
         client->setSocketDescriptor(socketDescriptor);
         EpikonConnectionManager::instance()->addConnection(client);
         connect(client, SIGNAL(finished()), client, SLOT(deleteLater()));
         client->start();
         return;
      }
-
+     qDebug() << "Incoming connection refused";
  }
 
  void EpikonServer::removeClient()
  {
-     EpikonClient *peer = qobject_cast<EpikonClient *>(sender());
+     Client *peer = qobject_cast<Client *>(sender());
+     qDebug() << "Removing client " << peer;
      peer->deleteLater();
  }
 

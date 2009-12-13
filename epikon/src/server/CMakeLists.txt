@@ -3,10 +3,12 @@ set(epikon_SRCS
     epikonserver.cpp 
     epikonconnectionmanager.cpp 
     epikonclient.cpp
+    epikonprotocolcommand.cpp
 )
 
 set(epikon_HDRS
     epikonconnectionmanager.h
+    epikonprotocolcommand.h
 )
 
 set(epikon_MOC_HDRS

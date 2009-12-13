@@ -4,21 +4,26 @@
 #include <QByteArray>
 #include <QSet>
 
-class EpikonClient;
-class EpikonConnectionManager
-{
-public:
-    explicit inline EpikonConnectionManager(){};
+namespace Epikon{
+    namespace Server {
+        class Client;
+        class EpikonConnectionManager
+        {
+        public:
+            explicit inline EpikonConnectionManager(){};
 
-    static EpikonConnectionManager *instance();
-    bool canAddConnection() const;
-    void addConnection(EpikonClient *connection);
-    void removeConnection(EpikonClient *connection);
-    int maxConnections() const;
+            static EpikonConnectionManager *instance();
+            bool canAddConnection() const;
+            void addConnection(Client *connection);
+            void removeConnection(Client *connection);
+            int maxConnections() const;
 
-private:
-    QSet<EpikonClient *> connections;
+        private:
+            QSet<Client *> connections;
 
-};
+        };
+
+    }
+}
 
 #endif // EPIKONCONNECTIONMANAGER_H

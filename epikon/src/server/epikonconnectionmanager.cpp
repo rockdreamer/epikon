@@ -1,6 +1,7 @@
 #include "epikonconnectionmanager.h"
 
 static const int MaxConnections = 250;
+using namespace Epikon::Server;
 
 Q_GLOBAL_STATIC(EpikonConnectionManager, connectionManager)
 
@@ -14,13 +15,13 @@ Q_GLOBAL_STATIC(EpikonConnectionManager, connectionManager)
      return (connections.size() < MaxConnections);
  }
 
- void EpikonConnectionManager::addConnection(EpikonClient *client)
+ void EpikonConnectionManager::addConnection(Client *client)
  {
      connections << client;
 
  }
 
- void EpikonConnectionManager::removeConnection(EpikonClient *client)
+ void EpikonConnectionManager::removeConnection(Client *client)
  {
      connections.remove(client);
 

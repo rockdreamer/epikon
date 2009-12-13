@@ -5,10 +5,11 @@
 
 int main(int argc, char *argv[])
 {
-    qDebug() << "Staring Epikon server v";
+    qDebug() << "Starting Epikon server v" << EPIKON_VERSION_STRING;
     QCoreApplication a(argc, argv);
     EpikonServer* srv = EpikonServer::instance();
     srv->setParent(&a);
+    qDebug() << "Listening on port 20000";
     srv->listen(QHostAddress::Any, 20000);
     return a.exec();
 }
