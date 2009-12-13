@@ -40,7 +40,7 @@ void EpikonMainWindow::changeEvent(QEvent *e)
 void EpikonMainWindow::onNewGame()
 {
 
-    m_game = new EpikonGame(this);
+    m_game = new Epikon::Client::Game(this);
     EpikonPlanet *pl1, *pl2,*pl3,*pl4;
 
     p1 = new EpikonPlayer(m_game);
@@ -81,8 +81,6 @@ void EpikonMainWindow::onNewGame()
 
     buildGameView();
 
-    EpikonAttack *att = new EpikonAttack(m_scene, pl1,pl3,p1,3);
-    att->start();
 }
 
 void EpikonMainWindow::buildGameView(){

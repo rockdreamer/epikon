@@ -3,19 +3,25 @@
 
 #include <QGraphicsScene>
 
-class EpikonGame;
+namespace Epikon {
+    namespace Client {
+        class Game;
+    }
+}class EpikonPlanet;
+class EpikonPlayer;
+
 class EpikonGameScene : public QGraphicsScene
 {
 Q_OBJECT
 public:
     explicit EpikonGameScene(QObject *parent = 0);
-    void setGame(EpikonGame *game);
+    void setGame(Epikon::Client::Game *game);
 signals:
-
+    void attack(EpikonPlanet& from, EpikonPlanet& to, EpikonPlayer& player);
 public slots:
     void onSelectionChange();
 private:
-    EpikonGame * m_game;
+    Epikon::Client::Game * m_game;
     void drawInitialScene();
     QList<QGraphicsItem *> currentSelection, previousSelection;
 };

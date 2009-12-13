@@ -2,12 +2,14 @@
 set(epikon_SRCS
     epikonmainwindow.cpp 
     epikongame.cpp 
-    epikonplayer.cpp 
+    epikonnetworkgame.cpp
+    epikonplayer.cpp
     epikonplanet.cpp 
     epikongamescene.cpp 
     epikonplanetitem.cpp 
     epikonattack.cpp 
     epikonshipitem.cpp 
+    epikonconnection.cpp
     main.cpp
 )
 
@@ -16,9 +18,11 @@ set(epikon_HDRS
 )
 
 set(epikon_MOC_HDRS
+    epikonconnection.h
     epikonmainwindow.h
     epikongame.h 
-    epikonplayer.h 
+    epikonnetworkgame.h
+    epikonplayer.h
     epikonplanet.h 
     epikongamescene.h 
     epikonattack.h 

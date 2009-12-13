@@ -1,14 +1,17 @@
 #include "epikongame.h"
 #include <QList>
+#include "epikongamescene.h"
+#include "epikonattack.h"
 
-EpikonGame::EpikonGame(QObject *parent) :
+using namespace Epikon::Client;
+Game::Game(QObject *parent) :
         QObject(parent)
 {
     m_planets=new QList<EpikonPlanet*>();
     m_players=new QList<EpikonPlayer*>();
 }
 
-void EpikonGame::addPlayer(EpikonPlayer* player, bool isMe)
+void Game::addPlayer(EpikonPlayer* player, bool isMe)
 {
     m_players->append(player);
     if (isMe){
@@ -16,15 +19,27 @@ void EpikonGame::addPlayer(EpikonPlayer* player, bool isMe)
     }
 }
 
-void EpikonGame::addPlanet(EpikonPlanet* planet)
+void Game::addPlanet(EpikonPlanet* planet)
 {
     m_planets->append(planet);
 }
 
-QString EpikonGame::toString()
-{
-    QString res;
-    res.append("EPIKONGAME v1.0\n");
-    res.append("PLAYERS");
-    return res;
+void Game::attack(EpikonPlanet& from, EpikonPlanet& to, EpikonPlayer& player){
+    if (from.remainingShips()<=1)
+        return;
+    EpikonGameScene * scene = qobject_cast<EpikonGameScene *>(sender());
+    EpikonAttack *attack = new EpikonAttack(scene,
+                                                &from,&to,
+                                                &player, from.remainingShips()/2);
+        from.shipsLeft(from.remainingShips()/2);
+        connect(attack,SIGNAL(finished()),this,SLOT(onAttackFinished()));
+        attack->start();
+
 }
+
+void Game::onAttackFinished(){
+    EpikonAttack *attack = qobject_cast<EpikonAttack *>(sender());
+    attack->toPlanet()->shipsLanded(attack->numShips(), attack->fromPlayer());
+    attack->deleteLater();
+}
+

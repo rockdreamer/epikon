@@ -2,6 +2,8 @@
 #define EPIKONSRVCLIENT_H
 
 #include <QThread>
+#include <QMutex>
+#include <QWaitCondition>
 #include <QTcpSocket>
 
 namespace Epikon{
@@ -11,6 +13,7 @@ namespace Epikon{
         Q_OBJECT
         public:
             explicit Client(QObject *parent = 0);
+            ~Client();
             void run();
 
             inline void setSocketDescriptor(int descriptor) {m_descriptor = descriptor;};
@@ -22,7 +25,11 @@ namespace Epikon{
 
         private:
             int m_descriptor;
+             QMutex mutex;
+             QWaitCondition cond;
+             bool quit;
             QTcpSocket *tcpSocket;
+
         };
     }
 }

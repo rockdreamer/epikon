@@ -6,8 +6,11 @@
 namespace Ui {
     class EpikonMainWindow;
 }
-
-class EpikonGame;
+namespace Epikon {
+    namespace Client {
+        class Game;
+    }
+}
 class EpikonPlayer;
 class EpikonGameScene;
 
@@ -26,7 +29,7 @@ protected:
 
 private:
     Ui::EpikonMainWindow *ui;
-    EpikonGame * m_game;
+    Epikon::Client::Game * m_game;
     EpikonPlayer *p1, *p2;
     EpikonGameScene * m_scene;
     void buildGameView();

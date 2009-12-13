@@ -4,6 +4,7 @@
 #include "epikonplanetitem.h"
 #include "epikonattack.h"
 
+using namespace Epikon::Client;
 
 EpikonGameScene::EpikonGameScene(QObject *parent) :
     QGraphicsScene(parent),m_game(0)
@@ -11,11 +12,12 @@ EpikonGameScene::EpikonGameScene(QObject *parent) :
     connect(this,SIGNAL(selectionChanged()),this,SLOT(onSelectionChange()));
 }
 
-void EpikonGameScene::setGame(EpikonGame *game)
+void EpikonGameScene::setGame(Game *game)
 {
     m_game=game;
     clear();
     drawInitialScene();
+    connect(this, SIGNAL(attack(EpikonPlanet&,EpikonPlanet&,EpikonPlayer&)),m_game,SLOT(attack(EpikonPlanet&,EpikonPlanet&,EpikonPlayer&)));
 }
 
 void EpikonGameScene::drawInitialScene(){
@@ -44,11 +46,8 @@ void EpikonGameScene::onSelectionChange(){
     EpikonPlanetItem* to = (EpikonPlanetItem*)currentSelection.at(0);
     for (int i=0;i<previousSelection.size();i++){
         from = (EpikonPlanetItem*)previousSelection.at(i);
-        EpikonAttack *attack = new EpikonAttack(this,
-                                                from->planet(),to->planet(),
-                                                m_game->me(),from->planet()->remainingShips()/2);
-        from->planet()->shipsLeft(from->planet()->remainingShips()/2);
-        attack->start();
+        emit attack(* (from->planet()), *(to->planet()), *(m_game->me()));
     }
+    setFocusItem(NULL);
     previousSelection=currentSelection;
 }

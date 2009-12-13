@@ -15,11 +15,14 @@ class EpikonAttack : public QParallelAnimationGroup
 public:
     EpikonAttack(EpikonGameScene* scene, EpikonPlanet* from,
                  EpikonPlanet* to, EpikonPlayer* player, int numShips, QObject* parent= 0);
+    int numShips(){return m_numships;};
+    EpikonPlanet *toPlanet() {return m_to;};
+    EpikonPlayer *fromPlayer() {return m_player;};
 public slots:
-    void onFinished();
+
 private:
     EpikonShipItem * item;
-    int numShips;
+    int m_numships;
     EpikonPlanet* m_to;
     EpikonPlayer* m_player;
 };

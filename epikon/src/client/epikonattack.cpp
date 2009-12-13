@@ -10,12 +10,11 @@
 #include <cmath>
 EpikonAttack::EpikonAttack(EpikonGameScene* scene, EpikonPlanet* from,
                            EpikonPlanet* to, EpikonPlayer* player, int numShips, QObject* parent):
-    QParallelAnimationGroup(parent), numShips(numShips),m_to(to),m_player(player)
+    QParallelAnimationGroup(parent), m_numships(numShips),m_to(to),m_player(player)
 {
     int speed=4;
     int duration = sqrt(pow(to->x()-from->x(),2)+pow(to->y()-from->y(),2))*speed;
-    this->numShips=numShips;
-    item = new EpikonShipItem(numShips);
+    item = new EpikonShipItem(m_numships);
     scene->addItem(item);
     QPropertyAnimation* anim;
     anim = new QPropertyAnimation(item,"pos");
@@ -42,9 +41,5 @@ EpikonAttack::EpikonAttack(EpikonGameScene* scene, EpikonPlanet* from,
     scalegroup->addAnimation(anim);
 
     addAnimation(scalegroup);
-    connect(anim,SIGNAL(finished()),this,SLOT(onFinished()));
 }
 
-void EpikonAttack::onFinished(){
-    m_to->shipsLanded(numShips, m_player);
-}

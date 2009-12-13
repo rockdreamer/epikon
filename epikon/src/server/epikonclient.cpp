@@ -8,8 +8,17 @@ using namespace Epikon::Protocol;
 
 int Timeout=1000;
 Client::Client(QObject *parent) :
-        QThread(parent)
+        QThread(parent),quit(false)
 {
+}
+
+Client::~Client()
+{
+    mutex.lock();
+     quit = true;
+     cond.wakeOne();
+     mutex.unlock();
+     wait();
 }
 
 void Client::run()
@@ -29,7 +38,7 @@ void Client::run()
     hi.setId("Epikon Server");
     hi.sendToSocket(tcpSocket);
 
-    forever{
+    while (!quit){
         while (tcpSocket->bytesAvailable() < (int)sizeof(quint16)) {
             if (!tcpSocket->waitForReadyRead()) {
                 emit socketError(tcpSocket->error());
