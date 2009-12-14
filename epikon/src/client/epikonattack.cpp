@@ -13,15 +13,15 @@ EpikonAttack::EpikonAttack(EpikonGameScene* scene, EpikonPlanet* from,
     QParallelAnimationGroup(parent), m_numships(numShips),m_to(to),m_player(player)
 {
     int speed=4;
-    int duration = sqrt(pow(to->x()-from->x(),2)+pow(to->y()-from->y(),2))*speed;
+    int duration = (to->center()-from->center()).manhattanLength()*speed;
     item = new EpikonShipItem(m_numships);
     scene->addItem(item);
     QPropertyAnimation* anim;
     anim = new QPropertyAnimation(item,"pos");
     anim->setDuration(duration);
-    QPointF pos =from->item()->pos();
+    QPointF pos =from->center();
     anim->setStartValue(pos);
-    pos=to->item()->pos();
+    pos=to->center();
     anim->setEndValue(pos);
     anim->setEasingCurve(QEasingCurve::InBack);
     addAnimation(anim);
