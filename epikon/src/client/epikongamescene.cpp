@@ -42,12 +42,16 @@ void EpikonGameScene::onSelectionChange(){
         return;
     }
     // Brace for impact, we have an attack
+
     EpikonPlanetItem* from;
     EpikonPlanetItem* to = (EpikonPlanetItem*)currentSelection.at(0);
+    bool clear=false;
     for (int i=0;i<previousSelection.size();i++){
+        clear=true;
         from = (EpikonPlanetItem*)previousSelection.at(i);
         emit attack(* (from->planet()), *(to->planet()), *(m_game->me()));
     }
-    setFocusItem(NULL);
+    if (clear)
+        clearSelection();
     previousSelection=currentSelection;
 }

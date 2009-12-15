@@ -14,13 +14,13 @@ namespace Epikon {
         public:
             explicit Connection(QObject *parent = 0);
             ~Connection();
-            void run();
         signals:
             void error(const QString& errormsg);
             void socketError(QTcpSocket::SocketError socketError);
         public slots:
             void connectToHost(const QString& hostname, quint16 port);
         private:
+            void run();
             QTcpSocket *tcpSocket;
             QString hostName;
             quint16 port;

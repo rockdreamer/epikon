@@ -9,6 +9,9 @@ namespace Ui {
 namespace Epikon {
     namespace Client {
         class Game;
+        class NetworkGame;
+        class Connection;
+
     }
 }
 class EpikonPlayer;
@@ -23,6 +26,8 @@ public:
 public slots:
     void onQuit();
     void onNewGame();
+    void onNewConnection();
+    void onNewNetworkGame();
 
 protected:
     void changeEvent(QEvent *e);
@@ -30,6 +35,9 @@ protected:
 private:
     Ui::EpikonMainWindow *ui;
     Epikon::Client::Game * m_game;
+    Epikon::Client::NetworkGame * m_netgame;
+    Epikon::Client::Connection * m_connection;
+
     EpikonPlayer *p1, *p2;
     EpikonGameScene * m_scene;
     void buildGameView();
