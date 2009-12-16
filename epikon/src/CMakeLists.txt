@@ -35,6 +35,7 @@ configure_file(
     IMMEDIATE
     @ONLY)
 
+add_subdirectory(protocol)
 add_subdirectory(server)
 add_subdirectory(client)
 

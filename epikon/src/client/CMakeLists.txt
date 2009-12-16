@@ -57,7 +57,7 @@ elseif(WIN32)
 endif()
 
 set_target_properties(epikon PROPERTIES LINK_FLAGS "${ALL_LINKFLAGS}")
-target_link_libraries(epikon epikonsrvlib ${QT_LIBRARIES} )
+target_link_libraries(epikon epikonsrvlib epikonprotolib ${QT_LIBRARIES} )
 
 install(TARGETS epikon
     RUNTIME DESTINATION ${BIN_INSTALL_DIR}

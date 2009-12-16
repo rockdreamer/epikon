@@ -3,11 +3,9 @@ set(epikon_SRCS
     player.cpp
     epikonserver.cpp 
     epikonclient.cpp
-    epikonprotocolcommand.cpp
 )
 
 set(epikon_HDRS
-    epikonprotocolcommand.h
 )
 
 set(epikon_MOC_HDRS
@@ -30,7 +28,7 @@ set_target_properties(epikonsrvlib PROPERTIES LINK_FLAGS "${ALL_LINKFLAGS}")
 
 add_executable(epikonsrv main.cpp)
 set_target_properties(epikonsrv PROPERTIES LINK_FLAGS "${ALL_LINKFLAGS}")
-target_link_libraries(epikonsrv epikonsrvlib ${QT_LIBRARIES} )
+target_link_libraries(epikonsrv epikonsrvlib epikonprotolib ${QT_LIBRARIES} )
 
 install(TARGETS epikonsrv
     RUNTIME DESTINATION ${BIN_INSTALL_DIR}

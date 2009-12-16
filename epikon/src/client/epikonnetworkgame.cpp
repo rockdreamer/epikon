@@ -1,7 +1,7 @@
 #include "epikonnetworkgame.h"
 #include "epikonattack.h"
 #include "epikonconnection.h"
-#include "server/epikonprotocolcommand.h"
+#include "protocol/epikonprotocolcommand.h"
 
 using namespace Epikon::Client;
 using namespace Epikon::Protocol;
