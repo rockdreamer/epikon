@@ -31,5 +31,4 @@ set_target_properties(epikonsrv PROPERTIES LINK_FLAGS "${ALL_LINKFLAGS}")
 target_link_libraries(epikonsrv epikonsrvlib epikonprotolib ${QT_LIBRARIES} )
 
 install(TARGETS epikonsrv
-    RUNTIME DESTINATION ${BIN_INSTALL_DIR}
-    LIBRARY DESTINATION ${LIB_INSTALL_DIR} )
+    RUNTIME DESTINATION bin)

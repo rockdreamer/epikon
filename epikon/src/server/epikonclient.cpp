@@ -1,5 +1,5 @@
 #include "epikonclient.h"
-#include <protocol/epikonprotocolcommand.h>
+#include <protocol/command.h>
 #include <QTcpSocket>
 #include <QDebug>
 

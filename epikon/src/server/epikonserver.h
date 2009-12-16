@@ -13,7 +13,7 @@ namespace Epikon {
         {
         Q_OBJECT
         public:
-            explicit inline Server(QObject *parent = 0){};
+            explicit inline Server(QObject *parent = 0):m_maxconnections(100){};
             static Server *instance();
 
             void addClient(Client *client);

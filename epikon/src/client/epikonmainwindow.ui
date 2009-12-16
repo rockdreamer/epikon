@@ -172,6 +172,8 @@ min-width: 10px;
     <addaction name="separator"/>
     <addaction name="actionConnectToServer"/>
     <addaction name="actionNewNetGame"/>
+    <addaction name="separator"/>
+    <addaction name="actionAllow_Others_to_Connect_to_me"/>
    </widget>
    <widget class="QMenu" name="menuOther_Stuff">
     <property name="title">
@@ -200,7 +202,7 @@ min-width: 10px;
   </action>
   <action name="actionConnectToServer">
    <property name="text">
-    <string>ConnectToServer</string>
+    <string>Connect To Server</string>
    </property>
   </action>
   <action name="actionNewNetGame">
@@ -226,6 +228,14 @@ min-width: 10px;
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionAllow_Others_to_Connect_to_me">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Allow others to connect to me</string>
    </property>
   </action>
  </widget>

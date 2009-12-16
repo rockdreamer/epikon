@@ -1,19 +1,19 @@
 #include "epikonmainwindow.h"
 #include "ui_epikonmainwindow.h"
+#include "ui_serverdialog.h"
+
 #include <QMessageBox>
 #include "epikongame.h"
 #include "epikonnetworkgame.h"
-//#include "epikonplanet.h"
-//#include "epikonattack.h"
-//#include "epikonplayer.h"
 #include "epikongamescene.h"
-#include "epikonconnection.h"
+#include "protocol/protocol.h"
+#include "server/epikonserver.h"
 
 using namespace Epikon::Client;
 
 EpikonMainWindow::EpikonMainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::EpikonMainWindow),m_game(0),p1(0),p2(0),m_scene(0)
+        QMainWindow(parent),
+        ui(new Ui::EpikonMainWindow),m_game(0),p1(0),p2(0),m_scene(0), m_server(0)
 {
     ui->setupUi(this);
 
@@ -22,6 +22,7 @@ EpikonMainWindow::EpikonMainWindow(QWidget *parent) :
     connect(ui->actionAbout_Qt, SIGNAL(triggered()),qApp,SLOT(aboutQt()));
     connect(ui->actionNew_Game, SIGNAL(triggered()),this,SLOT(onNewGame()));
     connect(ui->actionConnectToServer, SIGNAL(triggered()),this,SLOT(onNewConnection()));
+    connect(ui->actionAllow_Others_to_Connect_to_me, SIGNAL(toggled(bool)),this,SLOT(onTriggerServer(bool)));
     // This is here for testing purposes...
     onNewGame();
 }
@@ -44,9 +45,9 @@ void EpikonMainWindow::changeEvent(QEvent *e)
 }
 
 void EpikonMainWindow::onNewConnection(){
-    m_connection = new Connection();
+    m_connection = new Epikon::Protocol::Protocol("127.0.0.1",20000);
     connect(m_connection,SIGNAL(error(const QString&)), this, SLOT(onConnectionError(const QString&)));
-    m_connection ->connectToHost("127.0.0.1",20000);
+    m_connection ->start();
 }
 
 void EpikonMainWindow::onNewNetworkGame()
@@ -65,6 +66,34 @@ void EpikonMainWindow::onNewGame()
 
     buildGameView();
 
+}
+
+void EpikonMainWindow::onTriggerServer(bool enable){
+    if (enable){
+        QDialog dlg;
+        Ui::ServerDialog ui_dlg;
+        ui_dlg.setupUi(&dlg);
+        dlg.exec();
+        if (dlg.result()==QDialog::Accepted){
+            if (!m_server)
+                m_server = new Epikon::Server::Server(this);
+            m_server->setMaxClients((quint16) ui_dlg.maxPlayers->value());
+            m_server->listen(QHostAddress::Any, (quint16) ui_dlg.portNumber->value());
+        }
+        return;
+
+    }
+    if (
+            QMessageBox::question(this, tr("Really stop server?"),
+                                  tr("If you wish to stop allowin others to connect,"
+                                     "press OK"),
+                                  QMessageBox::Ok | QMessageBox::Cancel,
+                                  QMessageBox::Ok )
+            == QMessageBox::Ok)
+    {
+        qDebug() << "Closing Server";
+        m_server->close();
+    }
 }
 
 void EpikonMainWindow::onConnectionError(const QString &error)

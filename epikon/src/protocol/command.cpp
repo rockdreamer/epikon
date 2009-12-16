@@ -1,4 +1,4 @@
-#include "epikonprotocolcommand.h"
+#include "command.h"
 
 void Epikon::Protocol::Command::sendToSocket(QTcpSocket* socket) const
 {

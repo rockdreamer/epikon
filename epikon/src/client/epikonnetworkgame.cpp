@@ -1,12 +1,12 @@
 #include "epikonnetworkgame.h"
 #include "epikonattack.h"
-#include "epikonconnection.h"
-#include "protocol/epikonprotocolcommand.h"
+#include "protocol/command.h"
+#include "protocol/protocol.h"
 
 using namespace Epikon::Client;
 using namespace Epikon::Protocol;
 
-NetworkGame::NetworkGame(Connection *connection, QObject *parent) :
+NetworkGame::NetworkGame(Epikon::Protocol::Protocol *connection, QObject *parent) :
     Game(parent), m_connection(connection)
 {
 

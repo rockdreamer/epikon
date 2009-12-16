@@ -1,11 +1,11 @@
 
 set(epikon_SRCS
-    epikonprotocolcommand.cpp
+    command.cpp
     protocol.cpp
 )
 
 set(epikon_HDRS
-    epikonprotocolcommand.h
+    command.h
 )
 
 set(epikon_MOC_HDRS

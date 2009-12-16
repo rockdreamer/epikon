@@ -9,7 +9,6 @@ set(epikon_SRCS
     epikonplanetitem.cpp 
     epikonattack.cpp 
     epikonshipitem.cpp 
-    epikonconnection.cpp
     main.cpp
 )
 
@@ -18,7 +17,6 @@ set(epikon_HDRS
 )
 
 set(epikon_MOC_HDRS
-    epikonconnection.h
     epikonmainwindow.h
     epikongame.h 
     epikonnetworkgame.h
@@ -31,6 +29,7 @@ set(epikon_MOC_HDRS
 
 set(epikon_UIS
     epikonmainwindow.ui
+    serverdialog.ui
 )
 
 set(epikon_RSRCS
@@ -60,6 +59,5 @@ set_target_properties(epikon PROPERTIES LINK_FLAGS "${ALL_LINKFLAGS}")
 target_link_libraries(epikon epikonsrvlib epikonprotolib ${QT_LIBRARIES} )
 
 install(TARGETS epikon
-    RUNTIME DESTINATION ${BIN_INSTALL_DIR}
-    LIBRARY DESTINATION ${LIB_INSTALL_DIR} )
+    RUNTIME DESTINATION bin)
 
