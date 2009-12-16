@@ -58,12 +58,14 @@ void Game::testGame(){
     this->addPlayer(p2);
 
     pl1 = new EpikonPlanet(10,10,100,100, this);
+    pl1->setId(0);
     pl1->setName("Test Planet 1");
     this->addPlanet(pl1);
     pl1->setMaster(p1);
     pl1->shipsCreated(10);
 
     pl2 = new EpikonPlanet(10,200,100,100, this);
+    pl2->setId(1);
     pl2->setName("Test Planet 2");
     this->addPlanet(pl2);
     pl2->setMaster(p1);
@@ -71,12 +73,14 @@ void Game::testGame(){
 
 
     pl3 = new EpikonPlanet(300,200,100,100, this);
+    pl3->setId(2);
     pl3->setName("Test Planet 1 2");
     this->addPlanet(pl3);
     pl3->setMaster(p2);
     pl3->shipsCreated(10);
 
     pl4 = new EpikonPlanet(350,400,100,100, this);
+    pl4->setId(3);
     pl4->setName("Test Planet 2 2");
     this->addPlanet(pl4);
     pl4->setMaster(p2);

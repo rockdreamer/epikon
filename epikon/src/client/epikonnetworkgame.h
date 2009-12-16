@@ -10,7 +10,7 @@ namespace Epikon{
         {
         Q_OBJECT
         public:
-            explicit NetworkGame(QObject *parent = 0);
+            explicit NetworkGame(Connection * connection, QObject *parent = 0);
 
         signals:
 

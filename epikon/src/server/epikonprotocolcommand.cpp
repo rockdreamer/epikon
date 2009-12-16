@@ -1,23 +1,33 @@
 #include "epikonprotocolcommand.h"
 
-void Epikon::Protocol::Command::sendToSocket(QTcpSocket* socket)
+void Epikon::Protocol::Command::sendToSocket(QTcpSocket* socket) const
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
     out << (quint16)0;
-    writeToDataStream(out);
+    this->writeToDataStream(out);
     out.device()->seek(0);
-    out << (quint16)(block.size() - sizeof(quint16));
-    socket->write(block);
+    quint16 sz = (quint16)(block.size() - sizeof(quint16));
+    out << sz;
+    quint64 written = socket->write(block);
+    if (written!=block.size()){
+        qWarning() << "Could not send command " << this << " size:" << block.size() << " sent:" << written << " buffer:" <<  block;
+        return;
+    }
+    qDebug() << "Sending Command " << this << " type:" << m_type << " size:" << written << "buffer:" << block.toHex();
 }
 
 void Epikon::Protocol::Command::readFromDataStream(QDataStream& stream)
 {
+//    stream >> m_type;
+    stream >> m_sendtime;
 }
 
 void Epikon::Protocol::Command::writeToDataStream(QDataStream& stream) const
 {
+    stream << m_type;
+    stream << m_sendtime;
 }
 
 void Epikon::Protocol::Hello::readFromDataStream(QDataStream& stream)
@@ -45,12 +55,15 @@ void Epikon::Protocol::Attack::writeToDataStream(QDataStream& stream) const
 }
 
 QDataStream & operator<< (QDataStream& stream, const Epikon::Protocol::CommandType& cmd){
-    stream << (quint16&) cmd;
+    quint16 out = cmd;
+    stream << out;
     return stream;
 }
 
-QDataStream & operator>> (QDataStream& stream, Epikon::Protocol::CommandType& cmd){
-    stream >> (quint16&) cmd;
+QDataStream & operator>> (QDataStream& stream, enum Epikon::Protocol::CommandType& cmd){
+    quint16 in;
+    stream >> in;
+    cmd = Epikon::Protocol::CommandType(in);
     return stream;
 }
 
@@ -60,5 +73,6 @@ QDataStream & operator<< (QDataStream& stream, const Epikon::Protocol::Command& 
 }
 
 QDataStream & operator>> (QDataStream& stream, Epikon::Protocol::Command& cmd){
+    cmd.readFromDataStream(stream);
     return stream;
 }

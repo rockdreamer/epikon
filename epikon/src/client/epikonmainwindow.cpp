@@ -21,6 +21,7 @@ EpikonMainWindow::EpikonMainWindow(QWidget *parent) :
     connect(ui->actionAbout_Epikon, SIGNAL(triggered()),qApp,SLOT(aboutQt()));
     connect(ui->actionAbout_Qt, SIGNAL(triggered()),qApp,SLOT(aboutQt()));
     connect(ui->actionNew_Game, SIGNAL(triggered()),this,SLOT(onNewGame()));
+    connect(ui->actionConnectToServer, SIGNAL(triggered()),this,SLOT(onNewConnection()));
     // This is here for testing purposes...
     onNewGame();
 }
@@ -44,13 +45,14 @@ void EpikonMainWindow::changeEvent(QEvent *e)
 
 void EpikonMainWindow::onNewConnection(){
     m_connection = new Connection();
-
+    connect(m_connection,SIGNAL(error(const QString&)), this, SLOT(onConnectionError(const QString&)));
+    m_connection ->connectToHost("127.0.0.1",20000);
 }
 
 void EpikonMainWindow::onNewNetworkGame()
 {
 
-    m_game = new Epikon::Client::NetworkGame(this);
+    m_game = new Epikon::Client::NetworkGame(m_connection, this);
 
     buildGameView();
 
@@ -63,6 +65,11 @@ void EpikonMainWindow::onNewGame()
 
     buildGameView();
 
+}
+
+void EpikonMainWindow::onConnectionError(const QString &error)
+{
+    qDebug() << "Connection error:" << error;
 }
 
 void EpikonMainWindow::buildGameView(){

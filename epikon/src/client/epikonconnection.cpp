@@ -23,6 +23,11 @@ Connection::~Connection()
     wait();
 }
 
+void Connection::sendCommand(Command &cmd){
+    qDebug() << "Sending Command " << &cmd;
+    cmd.sendToSocket(tcpSocket);
+}
+
 void Connection::connectToHost(const QString &hostName, quint16 port)
 {
     QMutexLocker locker(&mutex);
@@ -42,7 +47,7 @@ void Connection::run()
         tcpSocket->connectToHost(serverName, serverPort);
         if (!tcpSocket->waitForConnected(Timeout)) {
             qWarning() << "Could not connect to " << serverName << ":" << serverPort;
-            emit socketError(tcpSocket->error());
+            emit error(tcpSocket->errorString());
             return;
           }
         qDebug() << "Connected to " << serverName << ":" << serverPort;
@@ -57,7 +62,7 @@ void Connection::run()
         while(!quit){
             while (tcpSocket->bytesAvailable() < (int)sizeof(quint16)) {
                 if (!tcpSocket->waitForReadyRead()) {
-                    emit socketError(tcpSocket->error());
+                    emit error(tcpSocket->errorString());
                     return;
                 }
             }
@@ -68,7 +73,7 @@ void Connection::run()
 
             while (tcpSocket->bytesAvailable() < blockSize) {
                 if (!tcpSocket->waitForReadyRead(Timeout)) {
-                    emit socketError(tcpSocket->error());
+                    emit error(tcpSocket->errorString());
                     return;
                 }
             }

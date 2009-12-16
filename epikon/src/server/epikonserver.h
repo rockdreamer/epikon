@@ -3,33 +3,45 @@
 
 #include <QTcpServer>
 
-class EpikonClient;
-class EpikonServerGame;
 
-class EpikonServer : public QTcpServer
-{
-Q_OBJECT
-public:
-    explicit inline EpikonServer(QObject *parent = 0){};
-    static EpikonServer *instance();
+namespace Epikon {
+    namespace Server {
+        class Client;
+        class Game;
+        class Player;
+        class Server : public QTcpServer
+        {
+        Q_OBJECT
+        public:
+            explicit inline Server(QObject *parent = 0){};
+            static Server *instance();
 
-    void addClient(EpikonClient *client);
-    void removeClient(EpikonClient *client);
+            void addClient(Client *client);
+            void removeClient(Client *client);
+            bool canAddClient() const;
+            quint16 maxClients() const {return m_maxconnections; };
+            void setMaxClients(quint16 m){m_maxconnections=m;};
 
-protected:
-    void incomingConnection(int socketDescriptor);
+        public slots:
+            void removeClient();
 
-private slots:
-    void removeClient();
+        protected:
+            void incomingConnection(int socketDescriptor);
 
-private:
-    QList<EpikonClient *> clients;
-    QList<EpikonServerGame *> games;
+        private slots:
 
-signals:
+        private:
+            QList<Client *> clients;
+            QList<Game *> games;
+            quint16 m_maxconnections;
 
-public slots:
+        signals:
 
-};
+        public slots:
+
+        };
+
+    }
+}
 
 #endif // EPIKONSERVER_H

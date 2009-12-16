@@ -169,8 +169,9 @@ min-width: 10px;
      <string>Start</string>
     </property>
     <addaction name="actionNew_Game"/>
-    <addaction name="actionLocal_LAN_Game"/>
-    <addaction name="actionInternet_Game"/>
+    <addaction name="separator"/>
+    <addaction name="actionConnectToServer"/>
+    <addaction name="actionNewNetGame"/>
    </widget>
    <widget class="QMenu" name="menuOther_Stuff">
     <property name="title">
@@ -197,14 +198,14 @@ min-width: 10px;
     <string>New Game</string>
    </property>
   </action>
-  <action name="actionLocal_LAN_Game">
+  <action name="actionConnectToServer">
    <property name="text">
-    <string>Local LAN Game</string>
+    <string>ConnectToServer</string>
    </property>
   </action>
-  <action name="actionInternet_Game">
+  <action name="actionNewNetGame">
    <property name="text">
-    <string>Internet Game</string>
+    <string>New Net Game</string>
    </property>
   </action>
   <action name="actionAbout_Epikon">

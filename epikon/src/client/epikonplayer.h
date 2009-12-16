@@ -25,6 +25,9 @@ public:
       int remainingPlanets() {return m_remainingPlanets;};
       void setRemainingPlanets(int in) {m_remainingPlanets=in;};
 
+      quint16 id(){return m_id;};
+      void setId(quint16 id){m_id=id;};
+
       QSvgRenderer *planetRenderer() {return m_planetrenderer;};
       void setPlanet(const QString& filename);
   public slots:
@@ -36,6 +39,7 @@ public:
       void lost();
   private:
       QString m_name;
+      quint16 m_id;
       int m_remainingShips, m_remainingPlanets;
       QSvgRenderer *m_planetrenderer;
 

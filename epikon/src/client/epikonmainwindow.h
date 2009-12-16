@@ -29,6 +29,8 @@ public slots:
     void onNewConnection();
     void onNewNetworkGame();
 
+    void onConnectionError(const QString &error);
+
 protected:
     void changeEvent(QEvent *e);
 

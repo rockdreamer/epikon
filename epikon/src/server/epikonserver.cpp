@@ -1,45 +1,52 @@
 #include "epikonserver.h"
-#include "epikonconnectionmanager.h"
 #include "epikonclient.h"
 #include <QDebug>
 
 using namespace Epikon::Server;
 
-Q_GLOBAL_STATIC(EpikonServer, epikonServer)
+Q_GLOBAL_STATIC(Server, epikonServer)
 
-EpikonServer *EpikonServer::instance()
+Server *Server::instance()
  {
      return epikonServer();
  }
 
- void EpikonServer::addClient(EpikonClient *client)
+ void Server::addClient(Client *client)
  {
      clients << client;
+     connect(client, SIGNAL(finished()), this, SLOT(removeClient()));
  }
 
- void EpikonServer::removeClient(EpikonClient *client)
+ void Server::removeClient(Client *client)
  {
+     disconnect(client, SIGNAL(finished()), this, SLOT(removeClient()));
      clients.removeAll(client);
+     client->deleteLater();
  }
 
- void EpikonServer::incomingConnection(int socketDescriptor)
+ bool Server::canAddClient() const
  {
-     if (EpikonConnectionManager::instance()->canAddConnection()) {
+     return (clients.size() < m_maxconnections);
+ }
+
+ void Server::removeClient()
+ {
+     Client *client = qobject_cast<Client *>(sender());
+     qDebug() << "Removing client " << client;
+     removeClient(client);
+ }
+
+ void Server::incomingConnection(int socketDescriptor)
+ {
+     if (canAddClient()) {
         qDebug() << "Incoming connection";
         Client *client = new Client(this);
         client->setSocketDescriptor(socketDescriptor);
-        EpikonConnectionManager::instance()->addConnection(client);
-        connect(client, SIGNAL(finished()), client, SLOT(deleteLater()));
+        addClient(client);
         client->start();
         return;
      }
      qDebug() << "Incoming connection refused";
  }
 
- void EpikonServer::removeClient()
- {
-     Client *peer = qobject_cast<Client *>(sender());
-     qDebug() << "Removing client " << peer;
-     peer->deleteLater();
- }
 

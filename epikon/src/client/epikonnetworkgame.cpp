@@ -1,11 +1,13 @@
 #include "epikonnetworkgame.h"
 #include "epikonattack.h"
 #include "epikonconnection.h"
+#include "server/epikonprotocolcommand.h"
 
 using namespace Epikon::Client;
+using namespace Epikon::Protocol;
 
-NetworkGame::NetworkGame(QObject *parent) :
-    Game(parent)
+NetworkGame::NetworkGame(Connection *connection, QObject *parent) :
+    Game(parent), m_connection(connection)
 {
 
 }
@@ -22,5 +24,9 @@ EpikonAttack *attack = new EpikonAttack(m_scene,
 void NetworkGame::attack(EpikonPlanet& from, EpikonPlanet& to, EpikonPlayer& player){
     if (from.remainingShips()<=1)
         return;
-
+    Attack attack;
+    attack.setFromPlanet(from.id());
+    attack.setToPlanet(to.id());
+    attack.setToPlayer(player.id());
+    m_connection->sendCommand(attack);
 }

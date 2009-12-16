@@ -10,6 +10,7 @@ int Timeout=1000;
 Client::Client(QObject *parent) :
         QThread(parent),quit(false)
 {
+
 }
 
 Client::~Client()
@@ -19,6 +20,12 @@ Client::~Client()
      cond.wakeOne();
      mutex.unlock();
      wait();
+}
+
+void Client::sendCommand(const Command& cmd)
+{
+    QMutexLocker locker(&mutex);
+    cmd.sendToSocket(tcpSocket);
 }
 
 void Client::run()
@@ -36,7 +43,7 @@ void Client::run()
 
     Hello hi;
     hi.setId("Epikon Server");
-    hi.sendToSocket(tcpSocket);
+    sendCommand(hi);
 
     while (!quit){
         while (tcpSocket->bytesAvailable() < (int)sizeof(quint16)) {

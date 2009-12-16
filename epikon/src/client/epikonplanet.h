@@ -18,6 +18,9 @@ public:
     explicit EpikonPlanet ( const QPoint & topLeft, const QSize & size,QObject *parent = 0 );
     explicit EpikonPlanet ( int x, int y, int width, int height,QObject *parent = 0 );
 
+    quint16 id(){return m_id;};
+    void setId(quint16 id){m_id=id;};
+
     QString name() {return m_name;};
     void setName(const QString& in) {m_name=in;};
 
@@ -39,6 +42,7 @@ public slots:
 private:
     QString m_name;
     int m_remainingShips;
+    quint16 m_id;
     EpikonPlayer *m_master;
     EpikonPlanetItem *m_item;
 };

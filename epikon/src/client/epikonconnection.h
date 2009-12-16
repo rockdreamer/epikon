@@ -7,6 +7,9 @@
 #include <QTcpSocket>
 
 namespace Epikon {
+    namespace Protocol {
+        class Command;
+    }
     namespace Client {
         class Connection : public QThread
         {
@@ -14,9 +17,9 @@ namespace Epikon {
         public:
             explicit Connection(QObject *parent = 0);
             ~Connection();
+            void sendCommand(Epikon::Protocol::Command &cmd);
         signals:
             void error(const QString& errormsg);
-            void socketError(QTcpSocket::SocketError socketError);
         public slots:
             void connectToHost(const QString& hostname, quint16 port);
         private:
