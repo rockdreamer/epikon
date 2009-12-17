@@ -53,6 +53,12 @@ elseif(APPLE)
     add_executable(epikon MACOSX_BUNDLE ${epikon_ALL_SRCS})
 elseif(WIN32)
     add_executable(epikon WIN32 ${epikon_ALL_SRCS})
+    install(FILES
+        ${QT_BINARY_DIR}/QtCore4.dll
+        ${QT_BINARY_DIR}/QtGui4.dll
+        ${QT_BINARY_DIR}/QtSvg4.dll
+        ${QT_BINARY_DIR}/QtNetwork4.dll
+        DESTINATION bin)
 endif()
 
 set_target_properties(epikon PROPERTIES LINK_FLAGS "${ALL_LINKFLAGS}")

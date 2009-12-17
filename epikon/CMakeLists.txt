@@ -25,5 +25,5 @@ include(InstallRequiredSystemLibraries)
 
 add_subdirectory(src)
 
-include(CPackOptions)
+include(${PROJECT_SOURCE_DIR}/CPackOptions.cmake)
 include(CPack)
