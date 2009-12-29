@@ -30,6 +30,7 @@ set(epikon_MOC_HDRS
 set(epikon_UIS
     epikonmainwindow.ui
     serverdialog.ui
+    connectiondialog.ui
 )
 
 set(epikon_RSRCS

@@ -13,15 +13,17 @@ Server *Server::instance()
 
  void Server::addClient(Client *client)
  {
+     qDebug() << "Adding client " << client;
      clients << client;
+     qDebug() << "Server: Connecting client slots";
      connect(client, SIGNAL(finished()), this, SLOT(removeClient()));
+     connect(client, SIGNAL(finished()), client, SLOT(deleteLater()));
  }
 
  void Server::removeClient(Client *client)
  {
      disconnect(client, SIGNAL(finished()), this, SLOT(removeClient()));
      clients.removeAll(client);
-     client->deleteLater();
  }
 
  bool Server::canAddClient() const
@@ -39,14 +41,13 @@ Server *Server::instance()
  void Server::incomingConnection(int socketDescriptor)
  {
      if (canAddClient()) {
-        qDebug() << "Incoming connection";
-        Client *client = new Client(this);
-        client->setSocketDescriptor(socketDescriptor);
+         qDebug() << "Server: Incoming connection";
+        Client *client = new Client(socketDescriptor, this);
         addClient(client);
+        qDebug() << "Server: Starting protocol thread";
         client->start();
         return;
      }
      qDebug() << "Incoming connection refused";
  }
-
 

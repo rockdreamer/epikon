@@ -1,4 +1,5 @@
 #include "protocol.h"
+#include <QDebug>
 
 namespace Epikon {
     namespace Protocol {
@@ -7,84 +8,96 @@ namespace Epikon {
 
         Protocol::Protocol(QObject *parent) :
                 QThread(parent)
-                
-        {
-            if (!m_socket)
-                m_socket = new QTcpSocket();
-        }
+        {}
 
         Protocol::Protocol(int socketDescriptor, QObject *parent) :
-                QThread(parent), m_descriptor(socketDescriptor), m_port(0), m_socket(0)
+                QThread(parent), m_descriptor(socketDescriptor), m_port(0)
         {
-            if (!m_socket)
-                m_socket = new QTcpSocket();
         }
 
         Protocol::Protocol(const QString &hostname, quint16 port ,QObject *parent) :
-                QThread(parent), m_descriptor(0), m_hostname(hostname), m_port(port), m_socket(0)
+                QThread(parent), m_descriptor(0), m_hostname(hostname), m_port(port)
         {
-            if (!m_socket)
-                m_socket = new QTcpSocket();
         }
 
         Protocol::~Protocol()
         {
+            qDebug() << "Protocol (destructor): killing thread";
             quit();
+            qDebug() << "Protocol (destructor): waiting for thread to end";
             wait();
-            delete m_socket;
         }
 
         void Protocol::sendCommand(const Command& cmd)
         {
+            qDebug() << "Protocol: sending command" << &cmd;
             QMutexLocker locker(&mutex);
-            cmd.sendToSocket(m_socket);
+            if (m_sockptr->state()== QAbstractSocket::ConnectedState){
+                cmd.sendToSocket(m_sockptr);
+            } else {
+                qDebug() << "Cannot send command " << &cmd << " to non - connected socket" ;
+            }
         }
 
         void Protocol::run()
         {
-            qDebug() << "New Protocol Thread " << currentThreadId();
+            qDebug() << "Protocol: New Protocol Thread " << currentThreadId();
+            QTcpSocket m_socket;
+            m_sockptr=&m_socket;
 
+            qDebug() << "Protocol: Connecting protocol signals";
+            connect(&m_socket, SIGNAL(readyRead()), this, SLOT(readCommand()));
+            connect(&m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError()));
+            connect(this, SIGNAL(connected()), this, SLOT(onConnected()));
 
             if (!m_port){
-                if (!m_socket->setSocketDescriptor(m_descriptor)) {
-                    qWarning() << "Could not bind to socket " << m_descriptor;
-                    emit error(m_socket->errorString());
+                qDebug() << "Protocol: setting socket descriptor " << m_descriptor;
+                if (!m_socket.setSocketDescriptor(m_descriptor)) {
+                    qWarning() << "Protocol: Could not bind to socket " << m_descriptor;
+                    emit error(m_socket.errorString());
                     return;
                 }
                 emit connected();
-                qDebug() << "New connection on socket descriptor" << m_descriptor;
+                qDebug() << "Protocol: New connection on socket descriptor" << m_descriptor;
             } else {
-                m_socket->connectToHost(m_hostname, m_port);
-                if (!m_socket->waitForConnected(Timeout)) {
-                    qWarning() << "Could not connect to host " << m_hostname << ":" << m_port;
-                    emit error( tr("Could not connect to host %1:%2. Connection Timed out").arg(m_hostname).arg(m_port));
+                qDebug() << "Protocol: connecting to host " << m_hostname << ":" << m_port;
+                m_socket.connectToHost(m_hostname, m_port);
+                if (!m_socket.waitForConnected(Timeout)) {
+                    qWarning() << "Protocol: Could not connect to host " << m_hostname << ":" << m_port;
+                    emit error( tr("Protocol: Could not connect to host %1:%2. Connection Timed out").arg(m_hostname).arg(m_port));
                     return;
                 }
+                qDebug() << "Protocol: connected to host " << m_hostname << ":" << m_port;
                 emit connected();
-                qDebug() << "New connection on socket descriptor" << m_descriptor;
             }
-
-            connect(m_socket, SIGNAL(readyRead()), this, SLOT(readCommand()));
-            connect(m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError(QAbstractSocket::SocketError)));
-
+            qDebug() << "Protocol: Starting protocol loop";
             exec();
-            qDebug() << "Leaving Protocol Thread ";
+            qDebug() << "Protocol: End of protocol loop, disconnecting";
+            m_socket.disconnectFromHost();
+            qDebug() << "Protocol: Waiting disconnect";
+            m_socket.waitForDisconnected();
+            qDebug() << "Protocol: Disconnected from host, disconnecting protocol signals";
+
+            disconnect(&m_socket, SIGNAL(readyRead()), this, SLOT(readCommand()));
+            disconnect(&m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError()));
+            disconnect(this, SIGNAL(connected()), this, SLOT(onConnected()));
 
         }
 
         void Protocol::readCommand(){
-            QDataStream in(m_socket);
+            qDebug() << "Protocol: reading from socket";
+            QDataStream in(qobject_cast<QTcpSocket*>( sender()));
             in.setVersion(QDataStream::Qt_4_6);
 
             if (waitingLength){
-                if (m_socket->bytesAvailable() < (int)sizeof(quint16)){
+                if (m_sockptr->bytesAvailable() < (int)sizeof(quint16)){
                     return;
                 }
                 in >> blockSize;
                 waitingLength=false;
             }
 
-            if (m_socket->bytesAvailable() < blockSize){
+            if (m_sockptr->bytesAvailable() < blockSize){
                 return;
             }
             in >> cmdtype;
@@ -109,13 +122,13 @@ namespace Epikon {
             }
 
             waitingLength=true;
-            if (m_socket->bytesAvailable()>0){
+            if (m_sockptr->bytesAvailable()>0){
                 readCommand();
             }
         }
 
-        void Protocol::handleSocketError(QAbstractSocket::SocketError socketError){
-            switch (socketError){
+        void Protocol::handleSocketError(){
+            switch (m_sockptr->error()){
             case QAbstractSocket::RemoteHostClosedError:
                 emit closed();
                 break;
@@ -130,7 +143,7 @@ namespace Epikon {
                          ));
                 break;
             default:
-                emit error(m_socket->errorString());
+                emit error(m_sockptr->errorString());
             }
         }
 

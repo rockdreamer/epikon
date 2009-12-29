@@ -30,7 +30,8 @@ namespace Epikon {
 
         public slots:
             void sendCommand(const Command& cmd);
-            void handleSocketError(QAbstractSocket::SocketError socketError);
+            void handleSocketError();
+            virtual void onConnected(){};
 
         private slots:
             void readCommand();
@@ -41,12 +42,12 @@ namespace Epikon {
             QMutex mutex;
             QWaitCondition cond;
             bool waitingLength;
-            QTcpSocket *m_socket;
+            QTcpSocket *m_sockptr;
             quint16 blockSize;
             CommandType cmdtype;
         };
 
-} // namespace Protocol
+    } // namespace Protocol
 } // namespace Epikon
 
 #endif // PROTOCOL_H

@@ -13,16 +13,18 @@ namespace Epikon {
         {
         Q_OBJECT
         public:
-            explicit inline Server(QObject *parent = 0):m_maxconnections(100){};
+            explicit inline Server(QObject *parent = 0):QTcpServer(parent),m_maxconnections(100){
+                connect(this,SIGNAL(newClient(Client*)), this, SLOT(addClient(Client*)));
+            };
             static Server *instance();
 
-            void addClient(Client *client);
             void removeClient(Client *client);
             bool canAddClient() const;
             quint16 maxClients() const {return m_maxconnections; };
             void setMaxClients(quint16 m){m_maxconnections=m;};
 
         public slots:
+            void addClient(Client *client);
             void removeClient();
 
         protected:
@@ -36,6 +38,7 @@ namespace Epikon {
             quint16 m_maxconnections;
 
         signals:
+            void newClient(Client * client);
 
         public slots:
 

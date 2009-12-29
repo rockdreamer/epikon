@@ -5,40 +5,27 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <QTcpSocket>
+#include "protocol/protocol.h"
 
 namespace Epikon{
-    namespace Protocol {
-        class Command;
-    }
     namespace Server {
         class Game;
-        class Client : public QThread
+        class Client : public Epikon::Protocol::Protocol
         {
         Q_OBJECT
         public:
-            explicit Client(QObject *parent = 0);
+            explicit Client(int descriptor, QObject *parent = 0);
             ~Client();
-            void run();
 
-            inline void setSocketDescriptor(int descriptor) {m_descriptor = descriptor;};
         signals:
-            void error(const QString& errormsg);
-            void socketError(QTcpSocket::SocketError socketError);
             void startGame();
             void joinGame(quint16 gamenum);
             void getGamesList();
 
         public slots:
- //           void onJoinGame(const Game *game);
-  //          void sendGamesList(const QList<Game *> &games);
-            void sendCommand(const Epikon::Protocol::Command& cmd);
+            virtual void onConnected();
 
         private:
-            int m_descriptor;
-             QMutex mutex;
-             QWaitCondition cond;
-             bool quit;
-            QTcpSocket *tcpSocket;
 
         };
     }

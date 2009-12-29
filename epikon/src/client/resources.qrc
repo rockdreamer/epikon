@@ -10,5 +10,7 @@
         <file>resources/common/earth-8.svg</file>
         <file>resources/common/earth-9.svg</file>
         <file>resources/common/rocket.svg</file>
+        <file>resources/style/epikon.qss</file>
+        <file>resources/style/epikon-xmas.qss</file>
     </qresource>
 </RCC>

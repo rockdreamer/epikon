@@ -1,6 +1,7 @@
 #include "epikonmainwindow.h"
 #include "ui_epikonmainwindow.h"
 #include "ui_serverdialog.h"
+#include "ui_connectiondialog.h"
 
 #include <QMessageBox>
 #include "epikongame.h"
@@ -13,7 +14,7 @@ using namespace Epikon::Client;
 
 EpikonMainWindow::EpikonMainWindow(QWidget *parent) :
         QMainWindow(parent),
-        ui(new Ui::EpikonMainWindow),m_game(0),p1(0),p2(0),m_scene(0), m_server(0)
+        ui(new Ui::EpikonMainWindow),m_game(0),p1(0),p2(0),m_scene(0),m_connection(0), m_server(0)
 {
     ui->setupUi(this);
 
@@ -45,9 +46,31 @@ void EpikonMainWindow::changeEvent(QEvent *e)
 }
 
 void EpikonMainWindow::onNewConnection(){
-    m_connection = new Epikon::Protocol::Protocol("127.0.0.1",20000);
-    connect(m_connection,SIGNAL(error(const QString&)), this, SLOT(onConnectionError(const QString&)));
-    m_connection ->start();
+    if (m_connection
+        && m_connection->isRunning()
+        && QMessageBox::question(this, tr("You are already connected?"),
+                              tr("You are already connected, if you want to disconnect and reconnect, press OK"),
+                              QMessageBox::Ok | QMessageBox::Cancel,
+                              QMessageBox::Ok ) == QMessageBox::Ok)
+    {
+        disconnect(m_connection,SIGNAL(error(const QString&)), this, SLOT(onConnectionError(const QString&)));
+        m_connection->quit();
+    }
+
+    QDialog dlg;
+    Ui::ConnectionDialog ui_conndlg;
+    ui_conndlg.setupUi(&dlg);
+    dlg.exec();
+    if (dlg.result()==QDialog::Accepted){
+        m_connection = new Epikon::Protocol::Protocol( ui_conndlg.hostName->currentText(),(quint16) ui_conndlg.portNumber->value(), this);
+        qDebug("MainWindow: connecting protocol signals");
+        connect(m_connection,SIGNAL(error(const QString&)), this, SLOT(onConnectionError(const QString&)));
+        qDebug("MainWindow: Starting protocol thread");
+        m_connection->start();
+    }
+    return;
+
+
 }
 
 void EpikonMainWindow::onNewNetworkGame()
@@ -75,10 +98,13 @@ void EpikonMainWindow::onTriggerServer(bool enable){
         ui_dlg.setupUi(&dlg);
         dlg.exec();
         if (dlg.result()==QDialog::Accepted){
-            if (!m_server)
+            if (!m_server){
                 m_server = new Epikon::Server::Server(this);
+                qDebug() << "Started server " << m_server;
+            }
             m_server->setMaxClients((quint16) ui_dlg.maxPlayers->value());
             m_server->listen(QHostAddress::Any, (quint16) ui_dlg.portNumber->value());
+            qDebug() << "Server: listening on port " << ui_dlg.portNumber->value();
         }
         return;
 
@@ -98,7 +124,7 @@ void EpikonMainWindow::onTriggerServer(bool enable){
 
 void EpikonMainWindow::onConnectionError(const QString &error)
 {
-    qDebug() << "Connection error:" << error;
+    qDebug() << "Main window: Connection error:" << error;
 }
 
 void EpikonMainWindow::buildGameView(){
