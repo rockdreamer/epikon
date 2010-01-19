@@ -25,6 +25,9 @@ namespace Epikon {
             void error(const QString& errormsg);
             void hello(const Hello & command);
             void attack(const Attack & command);
+            void protocol(const QString& protocolid);
+            void authrequest(const QString& username, const QString& pwd);
+            void authenticated();
             void connected();
             void closed();
 
@@ -36,6 +39,7 @@ namespace Epikon {
         private slots:
             void readCommand();
         private:
+            void prepareStateMachine();
             int m_descriptor;
             QString m_hostname;
             quint16 m_port;

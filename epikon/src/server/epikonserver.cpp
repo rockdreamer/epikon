@@ -42,7 +42,7 @@ Server *Server::instance()
  {
      if (canAddClient()) {
          qDebug() << "Server: Incoming connection";
-        Client *client = new Client(socketDescriptor, this);
+        Client *client = new Client(socketDescriptor);
         addClient(client);
         qDebug() << "Server: Starting protocol thread";
         client->start();

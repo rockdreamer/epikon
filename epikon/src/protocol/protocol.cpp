@@ -1,5 +1,8 @@
 #include "protocol.h"
 #include <QDebug>
+#include <QStateMachine>
+#include <QState>
+#include <QFinalState>
 
 namespace Epikon {
     namespace Protocol {
@@ -44,6 +47,8 @@ namespace Epikon {
             qDebug() << "Protocol: New Protocol Thread " << currentThreadId();
             QTcpSocket m_socket;
             m_sockptr=&m_socket;
+
+            prepareStateMachine();
 
             qDebug() << "Protocol: Connecting protocol signals";
             connect(&m_socket, SIGNAL(readyRead()), this, SLOT(readCommand()));
@@ -145,6 +150,74 @@ namespace Epikon {
             default:
                 emit error(m_sockptr->errorString());
             }
+        }
+
+        void Protocol::prepareStateMachine(){
+            qDebug() << "Protocol: Initialising Protocol State";
+            QStateMachine *machine = new QStateMachine(this);
+
+            /**
+             *  Main states are connected, disconnected and done, we start disconnected
+             *  and turn to connected when the socket is operational.
+             *  All the other states are part of the connected state
+             */
+            QState *disconnected = new QState();
+            QState *connected = new QState();
+            QFinalState *done = new QFinalState();
+
+            /**
+             *  When first connected, we need to know the protocol version,
+             *  then request authentication. We then either turn to the authenticated
+             *  state or flee to *done
+             */
+            QState *waitingproto = new QState(connected);
+            QState *waitingauthrequest = new QState(connected);
+            QState *waitingauthstatus = new QState(connected);
+            QState *authenticated = new QState(connected);
+            connected->setInitialState(waitingproto);
+
+            /**
+             * When authenticated, the user must provide some information about himself
+             * (nickname, status, planet picture, user picture, attack picture)
+             * Then the user can request to join the chat room, get the list of games and users
+             * join a game or create a game
+             * In the chat room, the user sends and receives messages, and can eventually exit
+             */
+            QState *waitinguserdetails = new QState(authenticated);
+            QState *waitingcommand = new QState(authenticated);
+            QState *inchat = new QState(authenticated);
+            QState *waitinggamecreation = new QState(authenticated);
+            QState *waitinggamelist = new QState(authenticated);
+            QState *waitinguserlist = new QState(authenticated);
+            QState *joinedgame = new QState(authenticated);
+            authenticated->setInitialState(waitinguserdetails);
+
+            /**
+             * When entering the game, we wait for the users to show up
+             * then receive the game map
+             * we then wait for the game to unpause, and the game progresses till
+             * there's a winner or cancellation
+             */
+            QState *waitinguser = new QState(joinedgame);
+            QState *waitingmap = new QState(joinedgame);
+            QState *paused = new QState(joinedgame);
+            QState *ingame = new QState(joinedgame);
+            joinedgame->setInitialState(waitinguser);
+
+            qDebug() << "Protocol: Connecting Protocol Signals";
+            disconnected->addTransition(this, SIGNAL(connected()), connected);
+            connected->addTransition(this, SIGNAL(closed()), done);
+            waitingproto->addTransition(this, SIGNAL(protocol(QString)), waitingauthrequest);
+            waitingauthrequest->addTransition(this, SIGNAL(authrequest(QString,QString)), waitingauthstatus);
+            waitingauthstatus->addTransition(this, SIGNAL(authenticated()), authenticated);
+            waitingauthstatus->addTransition(this, SIGNAL(error(QString)), done);
+
+            machine->addState(disconnected);
+            machine->addState(connected);
+            machine->setInitialState(disconnected);
+
+            qDebug() << "Protocol: Starting State Machine";
+            machine->start();
         }
 
     } // namespace Protocol

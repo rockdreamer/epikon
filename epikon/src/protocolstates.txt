@@ -1,0 +1,45 @@
+digraph G {
+    /* States definitions */
+    Start;
+    subgraph cluster_Connected{
+        label="Connected";
+        WaitingHello;
+        WaitingProtocol;
+        WaitingAuthRequest;
+        WaitingAuthStatus;
+        subgraph cluster_WaitingCommand {
+            label="WaitingCommand";
+            GameStopped;
+            WaitingUserData;
+            WaitingGameMap;
+            WaitingGameStart;
+            GameStarted;
+        }
+    }
+    Disconnected;
+
+    /* Transitions */
+    Start->WaitingHello [label="connected"];
+
+    cluster_Connected->Disconnected [label="onReceiveQuit"];
+
+    WaitingHello->Disconnected [label="onBadHello"];
+    WaitingHello->WaitingProtocol [label="onReceiveHello"];
+    WaitingProtocol->Disconnected [label="onBadProtocol"];
+    WaitingProtocol->WaitingAuthRequest [label="onReceiveProto"];
+    WaitingAuthRequest->Disconnected [label="onBadAuthRequest"];
+    WaitingAuthRequest->WaitingAuthStatus [label="onReceiveAuthRequest"];
+    WaitingAuthStatus->Disconnected [label="onBadAuth"];
+    WaitingAuthStatus->GameStopped [label="onReceiveGoodAuth"];
+    GameStopped->Disconnected [label="onReceiveQuit"];
+    GameStopped->WaitingUserData [label="onReceiveJoinGame"];
+    WaitingUserData->WaitingUserData [label="onReceiveGameUser"];
+    WaitingUserData->WaitingUserData [label="onReceiveUserPlanet"];
+    WaitingUserData->WaitingUserData [label="onReceiveUserAttack"];
+    WaitingUserData->WaitingGameStart [label="onReceiveGameDataComplete"];
+    WaitingGameStart->GameStarted [label="onReceiveGameStart"];
+    GameStarted->GameStarted [label="onReceiveAttack"];
+    GameStarted->GameStarted [label="onReceiveGeneratedShips"];
+    GameStarted->GameStopped [label="onReceivePlayerWon"];
+    GameStarted->GameStopped [label="onReceiveGameQuit"];
+}
