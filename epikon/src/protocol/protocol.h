@@ -11,18 +11,15 @@ namespace Epikon {
     namespace Protocol {
 
         class Command;
-        class Protocol : public QThread
+        class Protocol : public QTcpSocket
         {
             Q_OBJECT
         public:
             explicit Protocol(QObject *parent = 0);
-            explicit Protocol(int socketDescriptor, QObject *parent = 0);
-            explicit Protocol(const QString &hostname, quint16 port, QObject *parent = 0);
             ~Protocol();
-            void run();
 
         signals:
-            void error(const QString& errormsg);
+            void protocolError(const QString& errormsg);
             void hello(const Hello & command);
             void attack(const Attack & command);
             void protocol(const QString& protocolid);
@@ -46,7 +43,6 @@ namespace Epikon {
             QMutex mutex;
             QWaitCondition cond;
             bool waitingLength;
-            QTcpSocket *m_sockptr;
             quint16 blockSize;
             CommandType cmdtype;
         };

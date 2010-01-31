@@ -47,14 +47,14 @@ void EpikonMainWindow::changeEvent(QEvent *e)
 
 void EpikonMainWindow::onNewConnection(){
     if (m_connection
-        && m_connection->isRunning()
+        && m_connection->state()==QAbstractSocket::ConnectedState
         && QMessageBox::question(this, tr("You are already connected?"),
                               tr("You are already connected, if you want to disconnect and reconnect, press OK"),
                               QMessageBox::Ok | QMessageBox::Cancel,
                               QMessageBox::Ok ) == QMessageBox::Ok)
     {
         disconnect(m_connection,SIGNAL(error(const QString&)), this, SLOT(onConnectionError(const QString&)));
-        m_connection->quit();
+        m_connection->deleteLater();
     }
 
     QDialog dlg;
@@ -62,11 +62,11 @@ void EpikonMainWindow::onNewConnection(){
     ui_conndlg.setupUi(&dlg);
     dlg.exec();
     if (dlg.result()==QDialog::Accepted){
-        m_connection = new Epikon::Protocol::Protocol( ui_conndlg.hostName->currentText(),(quint16) ui_conndlg.portNumber->value(), this);
-        qDebug("MainWindow: connecting protocol signals");
-        connect(m_connection,SIGNAL(error(const QString&)), this, SLOT(onConnectionError(const QString&)));
-        qDebug("MainWindow: Starting protocol thread");
-        m_connection->start();
+        m_connection = new Epikon::Protocol::Protocol(this);
+        qDebug() << "MainWindow: connecting protocol signals";
+        connect(m_connection,SIGNAL(protocolError(QString)), this, SLOT(onConnectionError(const QString&)));
+        qDebug() << "MainWindow: connecting to " << ui_conndlg.hostName->currentText() << ":" << (quint16) ui_conndlg.portNumber->value();
+        m_connection->connectToHost(ui_conndlg.hostName->currentText(), (quint16) ui_conndlg.portNumber->value());
     }
     return;
 

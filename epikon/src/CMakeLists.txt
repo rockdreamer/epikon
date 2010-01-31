@@ -27,7 +27,11 @@ if(MSVC)
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT")
     endif(CMAKE_BUILD_TYPE STREQUAL Debug)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:wchar_t-")
-endif(MSVC)
+endif()
+
+if (APPLE)
+    set(CMAKE_OSX_ARCHITECTURES "i386;ppc")
+endif()
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/epikondefs.h.in"

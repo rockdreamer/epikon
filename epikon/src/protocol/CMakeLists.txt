@@ -14,6 +14,7 @@ set(epikon_MOC_HDRS
 
 
 find_package(Qt4 4.6.0 COMPONENTS QtCore QtNetwork REQUIRED)
+set(QT_USE_QTDBUS FALSE)
 include(${QT_USE_FILE})
 
 QT4_WRAP_CPP(epikon_MOC_SRCS ${epikon_MOC_HDRS})

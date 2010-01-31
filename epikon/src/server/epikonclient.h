@@ -10,12 +10,13 @@
 namespace Epikon{
     namespace Server {
         class Game;
-        class Client : public Epikon::Protocol::Protocol
+        class Client : public QThread
         {
         Q_OBJECT
         public:
             explicit Client(int descriptor, QObject *parent = 0);
             ~Client();
+            void run();
 
         signals:
             void startGame();
@@ -26,7 +27,7 @@ namespace Epikon{
             virtual void onConnected();
 
         private:
-
+            int m_descriptor;
         };
     }
 }

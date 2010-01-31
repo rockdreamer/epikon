@@ -21,9 +21,9 @@ if (EXISTS ${PROJECT_SOURCE_DIR}/.svn)
 endif (EXISTS ${PROJECT_SOURCE_DIR}/.svn)
 message ("Building epikon v${EPIKON_VERSION_STRING}")
 
-include(InstallRequiredSystemLibraries)
 
 add_subdirectory(src)
+include(InstallRequiredSystemLibraries)
 
 include(${PROJECT_SOURCE_DIR}/CPackOptions.cmake)
 include(CPack)
