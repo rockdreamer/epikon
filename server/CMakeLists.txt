@@ -14,22 +14,19 @@ set(epikon_MOC_HDRS
     epikonclient.h
 )
 
-
-find_package(Qt4 4.6.0 COMPONENTS QtCore QtNetwork REQUIRED)
-set(QT_USE_QTDBUS FALSE)
-include(${QT_USE_FILE})
-
-QT4_WRAP_CPP(epikon_MOC_SRCS ${epikon_MOC_HDRS})
+find_package(Qt5Network REQUIRED)
 set(epikon_ALL_SRCS ${epikon_SRCS} ${epikon_MOC_SRCS} ${epikon_HDRS} ${epikon_MOC_HDRS} )
 
 
 add_library(epikonsrvlib STATIC ${epikon_ALL_SRCS})
+target_link_libraries(epikonsrvlib Qt5::Network)
+
 set_target_properties(epikonsrvlib PROPERTIES LINK_FLAGS "${ALL_LINKFLAGS}")
 
 
 add_executable(epikonsrv main.cpp)
 set_target_properties(epikonsrv PROPERTIES LINK_FLAGS "${ALL_LINKFLAGS}")
-target_link_libraries(epikonsrv epikonsrvlib epikonprotolib ${QT_LIBRARIES} )
+target_link_libraries(epikonsrv epikonsrvlib epikonprotolib)
 
 install(TARGETS epikonsrv
     RUNTIME DESTINATION bin)
